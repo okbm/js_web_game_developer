@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>クイズ</title>
+    <link rel="stylesheet" type="text/css" href="main.css"> 
+  </head>
+  <body onclick="checkAnswers();">
+      <h1>クイズ</h1>
+      <div id="quiz">
+          <div id="question1">
+              <div class="question">Webサイトの作成に使用される主要なファイルタイプでないのは？</div>
+              <input type="radio" name="question1" value="a"/>
+              <label>.html</label>
+              <input type="radio" name="question1" value="b"/>
+              <label>.exe</label>
+              <input type="radio" name="question1" value="c"/>
+              <label>.js</label>
+              <input type="radio" name="question1" value="d"/>
+              <label>.css</label>
+          </div>
+          <br />
+          <div id="question2">
+              <div class="question">JavaScriptのオブジェクトを包む文字は？</div>
+              <input type="radio" name="question2" value="a"/>
+              <label>[]</label>
+              <input type="radio" name="question2" value="b"/>
+              <label>;;</label>
+              <input type="radio" name="question2" value="c"/>
+              <label>{}</label>
+              <input type="radio" name="question2" value="d"/>
+              <label>()</label>
+          </div>
+          <br />
+          <div id="question3">
+              <div class="question">Molesとは次のうちのどれのこと？</div>
+              <input type="radio" name="question3" value="a"/>
+              <label>Omniverous</label>
+              <input type="radio" name="question3" value="b"/>
+              <label>Adorable</label>
+              <input type="radio" name="question3" value="c"/>
+              <label>Whackable</label>
+              <input type="radio" name="question3" value="d"/>
+              <label>これら全部</label>
+          </div>
+          <br />
+          <div id="question4">
+              <div class="question">日本語の"か"の発音は？</div>
+              <input type="radio" name="question4" value="a"/>
+              <label>ka</label>
+              <input type="radio" name="question4" value="b"/>
+              <label>ko</label>
+              <input type="radio" name="question4" value="c"/>
+              <label>ke</label>
+              <input type="radio" name="question4" value="d"/>
+              <label>ki</label>
+          </div>
+          <br />
+          <div id="question5">
+              <div class="question">地上の重力定数はおよそ...</div>
+              <input type="radio" name="question5" value="a"/>
+              <label>10m/s^2</label>
+              <input type="radio" name="question5" value="b"/>
+              <label>.809m/s^2</label>
+              <input type="radio" name="question5" value="c"/>
+              <label>9.81m/s^2</label>
+              <input type="radio" name="question5" value="d"/>
+              <label>84.4m/s^2</label>
+          </div>
+          <br />
+          <div id="question6">
+              <div class="question">10進数の45を2進数に直すと？</div>
+              <input type="radio" name="question6" value="a"/>
+              <label>101101</label>
+              <input type="radio" name="question6" value="b"/>
+              <label>110011</label>
+              <input type="radio" name="question6" value="c"/>
+              <label>011101</label>
+              <input type="radio" name="question6" value="d"/>
+              <label>101011</label>
+          </div>
+          <br />
+          <div id="question7">
+              <div class="question">4 << 2 = ...</div>
+              <input type="radio" name="question7" value="a"/>
+              <label>16</label>
+              <input type="radio" name="question7" value="b"/>
+              <label>4</label>
+              <input type="radio" name="question7" value="c"/>
+              <label>2</label>
+              <input type="radio" name="question7" value="d"/>
+              <label>8</label>
+          </div>
+          <br />
+          <div id="question8">
+              <div class="question">直角三角形の直角をはさむ２辺の長さが分かっているとき、斜辺はどうやって求められますか？</div>
+              <input type="radio" name="question8" value="a"/>
+              <label>Pi*Radius^2</label>
+              <input type="radio" name="question8" value="b"/>
+              <label>ピタゴラスの定理</label>
+              <input type="radio" name="question8" value="c"/>
+              <label>計算機？</label>
+              <input type="radio" name="question8" value="d"/>
+              <label>Sin(辺1 + 辺2)</label>
+          </div>
+          <br />
+          <div id="question9">
+              <div class="question">ゲームはすべて、ちゃんと実行するには最低でも毎秒60フレームが必要：本当か嘘か？</div>
+              <input type="radio" name="question9" value="a"/>
+              <label>本当</label>
+              <input type="radio" name="question9" value="b"/>
+              <label>嘘</label>
+          </div>
+          <br />
+          <div id="question10">
+              <div class="question">サーバーの使用は何に役立ちますか？</div>
+              <input type="radio" name="question10" value="a"/>
+              <label>コードを隠す</label>
+              <input type="radio" name="question10" value="b"/>
+              <label>高い性能を必要とするゲーム</label>
+              <input type="radio" name="question10" value="c"/>
+              <label>プレイヤーの共有体験の実現</label>
+              <input type="radio" name="question10" value="d"/>
+              <label>これら全部</label>
+          </div>
+      </div>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+      <script src="impress.js"></script>
+      <!-- atomで必要 -->
+      <canvas></canvas>
+      <script src="atom.js"></script>
+      <script src="easel.js"></script>
+      <script src="melon.js"></script>
+      <script src="yabble.js"></script>
+      <script src="jquery.gamequery.js"></script>
+      <script src="jaws.js"></script>
+      <script src="enchant.js"></script>
+      <script src="crafty.js"></script>
+      <script src="game.js"></script>
+  </body>
+</html>
+
