@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <title>インタラクティブフィクション</title>
+    <link href="main.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- この<divを挿入 -->
+    <div id="player_inventory" class="itemable">
+    <span class="item-container"><h3>インベントリー：</h3>
+        <div class="inventory-box empty"></div>
+        <div class="inventory-box empty"></div>
+        <div class="inventory-box empty"></div>
+    </span>
+    </div>
+
+    <div id="impress">
+        <!-- classにitemableを追加 -->
+        <div id="1" class="step slide itemable">
+            <div class="slide-text">
+                <p>ここにあるのはタイムマシン。スイッチをオンにするかい？</p>
+                <p><a href="#2">オン</a>にする。</p>
+                <p>科学者のパパが帰ってくるのを<a href="#3">待つ</a>。</p>
+            </div>
+            <div class="menu item-container">
+                <div class="inventory-box"><img src="bat.png" alt="bat" class="item" id="bat"></div>
+            </div>
+        </div>
+        <div id="2" class="step slide itemable" data-x="1500">
+      <div class="slide-text">
+        <p>過去にタイムスリップ！　すごく楽しい。</p>
+      </div>
+      <div class="menu"><a href="#1">やり直し</a></div>
+    </div>
+    <div id="3" class="step slide itemable" data-x="-1500">
+      <div class="slide-text">
+        <p>しばらくしてパパが帰ってきました。</p>
+        <p>パパはあなたの宿題を手伝ってくれました。</p>
+        <p>ラッキーだったけれど、楽しくはなかった。。。</p>
+      </div>
+      <div class="menu"><a href="#1">やり直し</a></div>
+     </div>
+    </div>
+    <script src="impress.js"></script>
+    <script>impress().init();</script>
+    <script src="game.js"></script>
+    <script src="dragDrop.js"></script>
+</body>
+</html>
+
