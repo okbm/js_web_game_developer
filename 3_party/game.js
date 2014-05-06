@@ -1,11 +1,15 @@
 atom.input.bind(atom.key.LEFT_ARROW,'left');
 game = Object.create(Game.prototype);
+
+atom.currentMoleTime = 0;
+atom.tillNewMole = 2;
+
 game.update = function(dt){
-  if(atom.input.pressed('left')){
-    return console.log("プレイヤーは左への移動を開始");
-  } else if(atom.input.down('left')){
-    return console.log("プレイヤーはまだ左への移動中");
-  }
+  atom.currentMoleTime = atom.currentMoleTime + dt;
+  if(atom.currentMoleTime > atom.tillNewMole){
+    game.activeMole = Math.floor(Math.random()*4);
+    atom.currentMoleTime = 0;
+  };
 };
 
 game.makeHoles = function(labels, xOffset,yOffset){
@@ -22,6 +26,11 @@ game.makeHoles = function(labels, xOffset,yOffset){
 game.draw = function(){
   this.drawBackgrount();
   for(var i = 0; i < game.holes.length; i++){
+    if(i === game.activeMole){
+      game.holes[i].active = true;
+    } else {
+      game.holes[i].active = false;
+    };
     game.holes[i].draw();
   }
 };
@@ -32,7 +41,7 @@ game.mole = {
   noseSize: 8,
   noseColor: "#c55",
   eyeSize: 5,
-  eyeOffset: 10, 
+  eyeOffset: 10,
   eyeColor: "#000",
   draw: function(xPosition, yPosition){
     this.drawHead(xPosition, yPosition);
@@ -107,7 +116,6 @@ game.hole = {
   }
 };
 
-
 game.drawBackgrount = function(){
   atom.context.beginPath();
   atom.context.fillStyle = '#34e';
@@ -126,5 +134,6 @@ window.onblur = function(){
 window.onfocus = function(){
   return game.run();
 };
+
 game.makeHoles(['A','S','D','F'],145,atom.height/2 + 85);
 game.run();
