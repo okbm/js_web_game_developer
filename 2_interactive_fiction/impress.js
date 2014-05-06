@@ -21,6 +21,14 @@
 
 // You are one of those who like to know how thing work inside?
 // Let me show you the cogs that make impress.js run...
+var game = {
+  stepsTaken:[],
+  undateAfterStep: function(stepId){
+    this.stepsTaken.push(stepId);
+    console.log(this.stepsTaken);
+  }
+};
+
 (function ( document, window ) {
     'use strict';
     
@@ -412,6 +420,9 @@
             } else if (typeof step === "string") {
                 step = byId(step);
             }
+            if(!!step.id === true){
+              game.undateAfterStep(step.id);
+            };
             return (step && step.id && stepsData["impress-" + step.id]) ? step : null;
         };
 
