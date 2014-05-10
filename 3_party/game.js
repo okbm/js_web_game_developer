@@ -1,5 +1,8 @@
-atom.input.bind(atom.key.LEFT_ARROW,'left');
 game = Object.create(Game.prototype);
+game.keys = ['A','S','D','F'];
+for(var i=0; i< game.keys.length; i++){
+  atom.input.bind(atom.key[game.keys[i]], game.keys[i]);
+};
 
 atom.currentMoleTime = 0;
 atom.tillNewMole = 2;
@@ -9,6 +12,16 @@ game.update = function(dt){
   if(atom.currentMoleTime > atom.tillNewMole){
     game.activeMole = Math.floor(Math.random()*4);
     atom.currentMoleTime = 0;
+    if(game.bop.bopped === false){
+      game.bop.total = game.bop.total - 1;
+    } else {
+      game.bop.bopped = false;
+    }
+  };
+  for(var i = 0; i < game.keys.length; i++){
+    if(atom.input.pressed(game.keys[i])){
+      game.bop.with_key(game.keys[i]);
+    }
   };
 };
 
@@ -23,6 +36,26 @@ game.makeHoles = function(labels, xOffset,yOffset){
   };
 };
 
+// もぐら
+game.bop = {
+  bopped: true,
+  total:0,
+  draw:function(){
+    atom.context.fillStyle = '#000';
+    atom.context.font = '130px monospace';
+    atom.context.fillText('スコア:' + this.total, 300, 200);
+  },
+  with_key: function(key){
+    if(!!(game.activeMole + 1) === true && key === game.holes[game.activeMole].label){
+      this.total = this.total + 1;
+      game.activeMole = -1;
+      this.bopped = true;
+    } else {
+      this.total = this.total - 1;
+    }
+  }
+}
+
 game.draw = function(){
   this.drawBackgrount();
   for(var i = 0; i < game.holes.length; i++){
@@ -33,6 +66,7 @@ game.draw = function(){
     };
     game.holes[i].draw();
   }
+  this.bop.draw();
 };
 
 game.mole = {
@@ -135,5 +169,5 @@ window.onfocus = function(){
   return game.run();
 };
 
-game.makeHoles(['A','S','D','F'],145,atom.height/2 + 85);
+game.makeHoles(game.keys,145,atom.height/2 + 85);
 game.run();
