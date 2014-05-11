@@ -46,29 +46,38 @@ tm.define("TitleScene", {
 /*
  * main scene
  */
+var UI_DATA = {
+    LABELS: {
+        children: [{
+            type: "Label",
+            name: "timeLabel",
+            x: 100,
+            y: 120,
+            width: SCREEN_WIDTH,
+            fillStyle: "white",
+            text: "残り時間",
+            fontSize: 20,
+            align: "left"
+        }]
+    }
+};
 tm.define("MainScene", {
     superClass: "tm.app.Scene",
 
     init: function() {
         this.superInit();
-        this.star = tm.display.StarShape().addChildTo(this);
-        var label = tm.display.Label("tmlib.js のテンプレートだよ♪");
-        label.setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y);
-        label.setAlign("center").setBaseline("middle");
-        this.addChild(label);
-    },
-    update: function(app) {
-        var p = app.pointing;
-        this.star.x = p.x;
-        this.star.y = p.y;
 
-        if (p.getPointing()) {
-            this.star.rotation += 32;
-        }
+        // ラベルの表示（ToDo:時間を動的にしないとだめ)
+        this.fromJSON(UI_DATA.LABELS);
+
         // 画面(シーンの描画箇所)をタッチした時の動作
         this.addEventListener("pointingend", function(e) {
             e.app.replaceScene(EndScene());
         });
+
+    },
+    update: function(app) {
+
     },
 });
 
