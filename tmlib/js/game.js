@@ -10,7 +10,12 @@ var SCREEN_WIDTH    = 640;              // スクリーン幅
 var SCREEN_HEIGHT   = 1136;              // スクリーン高さ
 var SCREEN_CENTER_X = SCREEN_WIDTH/2;   // スクリーン幅の半分
 var SCREEN_CENTER_Y = SCREEN_HEIGHT/2;  // スクリーン高さの半分
+var BOX_WIDTH = 60;
+var BOX_HEIGHT = 50;
+var GROUND_HEIGHT = 100;
 
+// フォント
+var FONT_FAMILY = "'Helvetica' 'Meiryo' sans-serif";
 /**
  * リソースの読み込み
  */
@@ -18,25 +23,10 @@ var static_image = {
     "title_image":"image/PP_penpen500.jpg",
 };
 
+// 処理前に必要な処理
 tm.preload(function() {
 
 });
-
-var UI_DATA = {
-    LABELS: {
-        children: [{
-            type: "Label",
-            name: "timeLabel",
-            x: 100,
-            y: 120,
-            width: SCREEN_WIDTH,
-            fillStyle: "red",
-            text: "残り時間",
-            fontSize: 20,
-            align: "left"
-        }]
-    }
-};
 
 /*
  * main
@@ -45,54 +35,10 @@ tm.main(function() {
     var app = tm.display.CanvasApp("#world");
     app.resize(SCREEN_WIDTH, SCREEN_HEIGHT);
     app.fitWindow();
+    app.background = "rgba(113, 197, 207, 1.0)";
+    app.replaceScene(MainScene());
 
-    /*
-    http://jsdo.it/phi/meny
-    ↑オリジナルローディング
-
-    var loading = tm.app.LoadingScene({
-        assets: ASSETS,
-        width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
-        nextScene: TitleScene,
-    });
-    */
-
-    var loading = tm.ui.LoadingScene({
-      assets: static_image,
-    });
-
-    loading.onload = function() {
-      app.replaceScene(TitleScene());
-    };
-
-    // シーン切り替え
-    app.replaceScene(loading);
     app.run();
-});
-
-/**
- * TitleScene
- */
-tm.define("TitleScene", {
-    superClass : "tm.app.TitleScene",
-
-    init : function() {
-        this.superInit({
-            title :  "たいとる",
-            width :  SCREEN_WIDTH,
-            height : SCREEN_HEIGHT
-        });
-
-        var bug = tm.app.Sprite("title_image");
-        bug.setPosition(320, 500);
-        this.addChild(bug);
-
-        // 画面(シーンの描画箇所)をタッチした時の動作
-        this.addEventListener("pointingend", function(e) {
-            e.app.replaceScene(MainScene());
-        });
-    },
 });
 
 /*
@@ -102,49 +48,115 @@ tm.define("TitleScene", {
 tm.define("MainScene", {
     superClass: "tm.app.Scene",
 
+    dy: 0,
+    counter: 0,
+    wait: 60,
+    lives: true,
+    move: false,
+
     init: function() {
         this.superInit();
 
-        // ラベルの表示（ToDo:時間を動的にしないとだめ)
-        this.fromJSON(UI_DATA.LABELS);
+        // ペンギン生成
+        this.penguin = penguin(SCREEN_CENTER_X*3/5,SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT).addChildTo(this);
+        this.penguin.renderRoundRectangle();
 
-        // 画面(シーンの描画箇所)をタッチした時の動作
-        this.addEventListener("pointingend", function(e) {
-            e.app.replaceScene(EndScene());
-        });
+        // ground
+        var footer = tm.display.RectangleShape(SCREEN_WIDTH,GROUND_HEIGHT,{
+            fillStyle: "rgba(221,216,148,1.0)",
+            strokeStyle: "rgba(0,0,0,0.0)",
+            lineWidth: "0"
+        }).setPosition(SCREEN_CENTER_X,SCREEN_HEIGHT-GROUND_HEIGHT/2).addChildTo(this);
+
+        // groundbar
+        this.groundbar = groundBar(SCREEN_CENTER_X,SCREEN_HEIGHT-GROUND_HEIGHT).addChildTo(this);
+
+        // text
+        var label = tm.display.Label("ペンギンダッシュ").setPosition(SCREEN_CENTER_X, 25)
+        .setAlign("center").setBaseline("middle").setFillStyle("rgb(50,50,50)")
+        .setFontSize(50).setFontFamily(FONT_FAMILY).addChildTo(this);
 
     },
     // 右に動かす処理を入れてく感じ
     update: function(app) {
 
     },
+    // タッチ開始
+    onpointingstart: function(e) {
+        if( this.lives ){ this.move = true; }
+        if( this.move ){
+            //if(this.flappybox.y>0) this.dy = -12; 
+        }else{
+            //game reset
+            if( this.wait < 0 ){
+                this.app.replaceScene(MainScene());
+            }
+        }
+    },
+
 });
 
 
-/**
- * EndScene
+/*
+ * penguin
  */
-var RESULT_PARAM = {
-    score: 256,
-    msg:      "【チュートリアル】",
-    hashtags: ["テストテスト"],
-    url:      "http://okbm.github.io/",
-    width:    SCREEN_WIDTH,
-    height:   SCREEN_HEIGHT,
-    related:  "tmlib.js Tutorial testcording",
-};
+tm.define("penguin",{
+    superClass: "tm.display.RoundRectangleShape",
 
-tm.define("EndScene", {
-    // ResultSceneを使って作るとTweet付きのシーンになる
-    superClass : "tm.app.ResultScene",
+    live: true,
+    counter: 0,
 
-    init : function() {
-        this.superInit(RESULT_PARAM);
-    },
-
-    // Backボタンを押したらTitleSceneに戻る
-    onnextscene: function (e) {
-        e.target.app.replaceScene(TitleScene());
-    },
+    init: function(x,y){
+        this.superInit( BOX_WIDTH, BOX_HEIGHT,{
+            fillStyle: "rgba(210,190,39,1.0)",
+            strokeStyle: "rgba(0,0,0,1.0)",
+            lineWidth: "3"
+        });
+        this.setPosition(x,y);
+        this.counter = 0;
+    }
 });
 
+
+/*
+ * ground bar
+ */
+tm.define("groundBar", {
+    superClass: "tm.display.RectangleShape",
+
+    posX: 0,
+    posY: 0,
+    dx: 0,
+    move: false,
+
+    init: function(x, y) {
+        this.posX = x;
+        this.posY = y;
+
+        this.superInit(SCREEN_WIDTH+130,40,{
+            fillStyle: "rgba(152,227,83,1.0)",
+            strokeStyle: "rgba(0,0,0,1.0)",
+            lineWidth: "5"
+        });
+        this.setPosition(this.posX, this.posY);
+
+        for( var i=0; i<13; i++){
+            tm.display.TriangleShape(43,43,{
+                fillStyle: "rgba(115,189,50,1.0)",
+                strokeStyle: "rgba(0,0,0,0.0)",
+                lineWidth: "0"
+            }).setPosition((60*i)-SCREEN_CENTER_X, 3).addChildTo(this);
+        }
+        this.move = true;
+    },
+    update: function(){
+        if( this.move ){
+            this.dx -= 5;
+            if(this.dx < -60) this.dx = 0;
+            this.setPosition(this.posX+this.dx,this.posY);
+        }
+    },
+    stop: function(){ this.move = false; },
+    play: function(){ this.move = true; },
+    pause: function(){ this.move = !this.move; }
+});
