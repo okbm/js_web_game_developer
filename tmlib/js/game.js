@@ -11,6 +11,33 @@ var SCREEN_HEIGHT   = 1136;              // スクリーン高さ
 var SCREEN_CENTER_X = SCREEN_WIDTH/2;   // スクリーン幅の半分
 var SCREEN_CENTER_Y = SCREEN_HEIGHT/2;  // スクリーン高さの半分
 
+/**
+ * リソースの読み込み
+ */
+var static_image = {
+    "title_image":"image/PP_penpen500.jpg",
+};
+
+tm.preload(function() {
+
+});
+
+var UI_DATA = {
+    LABELS: {
+        children: [{
+            type: "Label",
+            name: "timeLabel",
+            x: 100,
+            y: 120,
+            width: SCREEN_WIDTH,
+            fillStyle: "red",
+            text: "残り時間",
+            fontSize: 20,
+            align: "left"
+        }]
+    }
+};
+
 /*
  * main
  */
@@ -19,8 +46,28 @@ tm.main(function() {
     app.resize(SCREEN_WIDTH, SCREEN_HEIGHT);
     app.fitWindow();
 
+    /*
+    http://jsdo.it/phi/meny
+    ↑オリジナルローディング
+
+    var loading = tm.app.LoadingScene({
+        assets: ASSETS,
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT,
+        nextScene: TitleScene,
+    });
+    */
+
+    var loading = tm.ui.LoadingScene({
+      assets: static_image,
+    });
+
+    loading.onload = function() {
+      app.replaceScene(TitleScene());
+    };
+
     // シーン切り替え
-    app.replaceScene(TitleScene());
+    app.replaceScene(loading);
     app.run();
 });
 
@@ -32,10 +79,15 @@ tm.define("TitleScene", {
 
     init : function() {
         this.superInit({
-            title :  "チュートリアル",
+            title :  "たいとる",
             width :  SCREEN_WIDTH,
             height : SCREEN_HEIGHT
         });
+
+        var bug = tm.app.Sprite("title_image");
+        bug.setPosition(320, 500);
+        this.addChild(bug);
+
         // 画面(シーンの描画箇所)をタッチした時の動作
         this.addEventListener("pointingend", function(e) {
             e.app.replaceScene(MainScene());
@@ -46,21 +98,7 @@ tm.define("TitleScene", {
 /*
  * main scene
  */
-var UI_DATA = {
-    LABELS: {
-        children: [{
-            type: "Label",
-            name: "timeLabel",
-            x: 100,
-            y: 120,
-            width: SCREEN_WIDTH,
-            fillStyle: "white",
-            text: "残り時間",
-            fontSize: 20,
-            align: "left"
-        }]
-    }
-};
+
 tm.define("MainScene", {
     superClass: "tm.app.Scene",
 
@@ -76,6 +114,7 @@ tm.define("MainScene", {
         });
 
     },
+    // 右に動かす処理を入れてく感じ
     update: function(app) {
 
     },
