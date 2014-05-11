@@ -7,15 +7,16 @@
  * contant
  */
 var SCREEN_WIDTH    = 640;              // スクリーン幅
-var SCREEN_HEIGHT   = 1136;              // スクリーン高さ
+var SCREEN_HEIGHT   = 1136;             // スクリーン高さ
 var SCREEN_CENTER_X = SCREEN_WIDTH/2;   // スクリーン幅の半分
 var SCREEN_CENTER_Y = SCREEN_HEIGHT/2;  // スクリーン高さの半分
+
 var BOX_WIDTH = 60;
 var BOX_HEIGHT = 50;
 var GROUND_HEIGHT = 100;
 
-// フォント
 var FONT_FAMILY = "'Helvetica' 'Meiryo' sans-serif";
+
 /**
  * リソースの読み込み
  */
@@ -77,15 +78,15 @@ tm.define("MainScene", {
         .setFontSize(50).setFontFamily(FONT_FAMILY).addChildTo(this);
 
     },
-    // 右に動かす処理を入れてく感じ
     update: function(app) {
+        this.penguin.x += this.dy;
 
     },
     // タッチ開始
     onpointingstart: function(e) {
         if( this.lives ){ this.move = true; }
         if( this.move ){
-            //if(this.flappybox.y>0) this.dy = -12; 
+            if(this.penguin.y>0) this.dy = 12;
         }else{
             //game reset
             if( this.wait < 0 ){
@@ -114,7 +115,8 @@ tm.define("penguin",{
         });
         this.setPosition(x,y);
         this.counter = 0;
-    }
+    },
+    // クリックしたらジャンプ的な
 });
 
 
