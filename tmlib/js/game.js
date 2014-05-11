@@ -79,14 +79,29 @@ tm.define("MainScene", {
 
     },
     update: function(app) {
-        this.penguin.x += this.dy;
+        if( this.move || this.jump ){
+          this.penguin.y += this.dy;
+          this.dy += 1;
+        }
+        // クリックしたらジャンプさせる
+        if (app.pointing.getPointingStart() == true) {
+          this.penguin.y -= 50;
+        }
+
+        // 初期のヘッダー画像に達したら0に戻す
+        if(SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT <= this.penguin.y){
+          this.dy = 0;
+        }
 
     },
     // タッチ開始
     onpointingstart: function(e) {
-        if( this.lives ){ this.move = true; }
+        if( this.lives ){
+          this.move = true;
+        }
+
         if( this.move ){
-            if(this.penguin.y>0) this.dy = 12;
+            if(this.penguin.y>0) this.dy = 2;
         }else{
             //game reset
             if( this.wait < 0 ){
@@ -116,7 +131,6 @@ tm.define("penguin",{
         this.setPosition(x,y);
         this.counter = 0;
     },
-    // クリックしたらジャンプ的な
 });
 
 
