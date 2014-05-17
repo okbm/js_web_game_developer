@@ -1,4 +1,3 @@
-// forked from phi's "template - tmlib.js 0.1.7" http://jsdo.it/phi/m68l
 /*
  * tmlib.js 0.2.0
  */
@@ -15,6 +14,18 @@ var BOX_WIDTH = 60;
 var BOX_HEIGHT = 50;
 var GROUND_HEIGHT = 100;
 
+// 障害物周り
+var BLOCK_NUM = 3;
+var SPACE_HEIGHT = 50;
+var SPACE_WIDTH = 200;
+var PIPE_WIDTH = 50;
+var PIPE_HEIGHT = SCREEN_HEIGHT - GROUND_HEIGHT - SPACE_HEIGHT; // 1136 - 100 - 200 = 836
+var START_X = SCREEN_WIDTH+PIPE_WIDTH/2;
+var SCROLL_SPEAD = 10;
+var BLOCK_HEIGHT_MAX = 80;
+
+// other
+var PENGUIN_JUMP = 50;
 var FONT_FAMILY = "'Helvetica' 'Meiryo' sans-serif";
 
 /**
@@ -58,6 +69,12 @@ tm.define("MainScene", {
     init: function() {
         this.superInit();
 
+        // 障害物作成
+        this.block = new Array(BLOCK_NUM);
+        for( var i=0; i<BLOCK_NUM; i++){
+          this.block[i] = createBlock(SCREEN_CENTER_Y).addChildTo(this);
+        }
+
         // ペンギン生成
         this.penguin = penguin(SCREEN_CENTER_X*3/5,SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT).addChildTo(this);
         this.penguin.renderRoundRectangle();
@@ -82,15 +99,29 @@ tm.define("MainScene", {
         if( this.move || this.jump ){
           this.penguin.y += this.dy;
           this.dy += 1;
-        }
-        // クリックしたらジャンプさせる
-        if (app.pointing.getPointingStart() == true) {
-          this.penguin.y -= 50;
-        }
 
-        // 初期のヘッダー画像に達したら0に戻す
-        if(SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT <= this.penguin.y){
-          this.dy = 0;
+          ++this.counter;
+
+          // クリックしたらジャンプさせる
+          if (app.pointing.getPointingStart() == true) {
+            this.penguin.y -= PENGUIN_JUMP;
+          }
+
+          // 初期のヘッダー画像に達したら0に戻す
+          if(SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT <= this.penguin.y){
+            this.dy = 0;
+          }
+
+          // 障害物を設置する
+          var block_interval = (PIPE_WIDTH+SPACE_WIDTH)/SCROLL_SPEAD;
+          for( var i=0; i<BLOCK_NUM; i++ ){
+              var st = (this.counter - block_interval*i)%(block_interval*BLOCK_NUM);
+              if( st === 0 ){
+                  var y = SCREEN_WIDTH - (BLOCK_HEIGHT_MAX)*Math.random();
+                  this.block[i].reset(y).play();
+              }
+          }
+
         }
 
     },
@@ -133,7 +164,6 @@ tm.define("penguin",{
     },
 });
 
-
 /*
  * ground bar
  */
@@ -172,6 +202,50 @@ tm.define("groundBar", {
             this.setPosition(this.posX+this.dx,this.posY);
         }
     },
+    stop: function(){ this.move = false; },
+    play: function(){ this.move = true; },
+    pause: function(){ this.move = !this.move; }
+});
+
+/*
+ * createBlock
+ */
+tm.define("createBlock", {
+    superClass: "tm.display.RectangleShape",
+
+    posX: START_X,
+    posY: SCREEN_CENTER_Y,
+    dx: SCROLL_SPEAD,
+
+    move: false,
+
+    init: function(y) {
+        this.posY = y+(PIPE_HEIGHT+SPACE_HEIGHT)/2;
+
+        this.superInit(PIPE_WIDTH,PIPE_HEIGHT,{
+            fillStyle: "rgba(116,191,46,1.0)",
+            strokeStyle: "rgba(0,0,0,1.0)",
+            lineWidth: "5"
+        });
+        this.setPosition(this.posX, this.posY);
+    },
+
+    update: function(){
+        if( this.move && (this.posX > - PIPE_WIDTH/2) ){
+            this.posX -= this.dx;
+            this.setPosition(this.posX, this.posY);
+        }
+    },
+
+    reset: function(y){
+        this.posX = START_X;
+        this.posY = y+(PIPE_HEIGHT+SPACE_HEIGHT)/2;
+
+        this.setPosition(this.posX, this.posY);
+
+        return this;
+    },
+
     stop: function(){ this.move = false; },
     play: function(){ this.move = true; },
     pause: function(){ this.move = !this.move; }
