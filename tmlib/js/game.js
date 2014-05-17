@@ -81,7 +81,7 @@ tm.define("MainScene", {
 
     dy: 0,
     counter: 0,
-    wait: 60,
+    wait: 1,
     lives: true,
     move: false,
     score:0,
@@ -131,8 +131,9 @@ tm.define("MainScene", {
           }
 
           // 初期のヘッダー画像に達したら0に戻す
-          if(SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT < this.penguin.y){
+          if(SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT <= this.penguin.y){
             this.dy = 0;
+            this.penguin.y = SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT;
           }
 
           // 障害物を設置する
@@ -157,6 +158,11 @@ tm.define("MainScene", {
                   this.lives = false;
               }
           }
+
+          // game over
+          if( !this.lives ){
+            --this.wait;
+          }
         }
     },
     // タッチ開始
@@ -166,10 +172,10 @@ tm.define("MainScene", {
         }
 
         if( this.move ){
-            if(this.penguin.y>0) this.dy = 2;
-        }else{
+            if( this.penguin.y>0 ) this.dy = 2;
+        } else {
             //game reset
-            if( this.wait < 0 ){
+            if( this.wait <= 0 ){
                 this.app.replaceScene(MainScene());
             }
         }
@@ -180,7 +186,6 @@ tm.define("MainScene", {
         this.groundbar.stop();
         for( var j=0; j<3; j++){ this.block[j].stop();}
     },
-
 });
 
 
