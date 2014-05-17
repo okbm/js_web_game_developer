@@ -41,6 +41,24 @@ tm.preload(function() {
 
 });
 
+// ラベルのリスト
+var UI_DATA = {
+  LABELS: {
+    children: [
+      {
+        type:"Label",name:"scoreLabel",
+        x:93,y:90,width:150,fillStyle:"white",
+        text:"score:",fontSize:24,align:"end"
+      },
+      {
+        type:"Label",name:"score_result",
+        x:170,y:90,width:150,fillStyle:"white",
+        text:"0",fontSize:24,align:"end"
+      },
+    ]
+  }
+}
+
 /*
  * main
  */
@@ -66,9 +84,12 @@ tm.define("MainScene", {
     wait: 60,
     lives: true,
     move: false,
+    score:0,
 
     init: function() {
         this.superInit();
+
+        this.fromJSON(UI_DATA.LABELS);
 
         // 障害物作成
         this.block = new Array(BLOCK_NUM);
@@ -94,7 +115,6 @@ tm.define("MainScene", {
         var label = tm.display.Label("ペンギンダッシュ").setPosition(SCREEN_CENTER_X, 25)
         .setAlign("center").setBaseline("middle").setFillStyle("rgb(50,50,50)")
         .setFontSize(50).setFontFamily(FONT_FAMILY).addChildTo(this);
-
     },
     update: function(app) {
         if( this.move || this.jump ){
@@ -103,13 +123,15 @@ tm.define("MainScene", {
 
           ++this.counter;
 
+          this.score_result.text = this.score;
+
           // クリックしたらジャンプさせる
           if (app.pointing.getPointingStart() == true) {
             this.penguin.y -= PENGUIN_JUMP;
           }
 
           // 初期のヘッダー画像に達したら0に戻す
-          if(SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT <= this.penguin.y){
+          if(SCREEN_HEIGHT-GROUND_HEIGHT-BOX_HEIGHT < this.penguin.y){
             this.dy = 0;
           }
 
@@ -120,7 +142,20 @@ tm.define("MainScene", {
             if( st === 0 ){
                 var y = SCREEN_HEIGHT - BLOCK_HEIGHT_MIN + (BLOCK_HEIGHT_MAX)*Math.random();
                 this.block[i].reset(y).play();
+
+                // 障害物作成したタイミングでスコア更新(適当
+                ++this.score;
             }
+          }
+
+          // 当り判定
+          for( var j=0; j<BLOCK_NUM; j++ ){
+              var up = this.block[j];
+              if(this.penguin.isHitElementRect(up) ){
+                  console.log("OUT! PIPE");
+                  this.stop();
+                  this.lives = false;
+              }
           }
         }
     },
@@ -138,6 +173,12 @@ tm.define("MainScene", {
                 this.app.replaceScene(MainScene());
             }
         }
+    },
+    stop: function(){
+        this.move = false;
+        this.penguin.stop();
+        this.groundbar.stop();
+        for( var j=0; j<3; j++){ this.block[j].stop();}
     },
 
 });
@@ -161,6 +202,7 @@ tm.define("penguin",{
         this.setPosition(x,y);
         this.counter = 0;
     },
+    stop: function(){ this.move = false; },
 });
 
 /*
